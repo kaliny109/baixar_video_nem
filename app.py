@@ -18,6 +18,7 @@ def download():
             return f"Download concluído!{voltar}"
     except Exception as e:
         return f"Erro ao tentar baixar o vídeo: {str(e)}.{voltar}"
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
