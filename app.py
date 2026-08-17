@@ -1,15 +1,20 @@
 from flask import Flask, render_template, request
+import os
+import sys
+import webview
 import yt_dlp
 
-app = Flask(__name__)
-
-@app.route('/')
-def  index(): 
-    return render_template('index.html')
+if getattr(sys, 'frozen', False):
+    template_folder = os.path.join(sys._MEIPASS, 'templates')
+    static_folder = os.path.join(sys._MEIPASS, 'static')
+    app = Flask(__name__, template_folder=template_folder,
+    static_folder=static_folder)
+else:    
+    app = Flask(__name__)
 
 @app.route('/download', methods=['POST'])
-def download():
-    voltar = '<br><a href="/">Voltar</b></a>'
+def  download():
+    voltar = '<br><b><a href="/">Voltar</a></b>'
     try:
         url = request.form.get('url')
         ydl_opts = {}
@@ -17,8 +22,14 @@ def download():
             ydl.download([url])
             return f"Download concluído!{voltar}"
     except Exception as e:
-        return f"Erro ao tentar baixar o vídeo: {str(e)}.{voltar}"
+        return f"Erro ao tentar baixar o vídeo: {str(e)}.{voltar}" 
     
-
 if __name__ == '__main__':
-    app.run(debug=True)
+     window = webview.create_window(
+        title="Download de videos",
+        url=app,
+        width=1000,
+        height=700
+    )
+
+webview.start()     
